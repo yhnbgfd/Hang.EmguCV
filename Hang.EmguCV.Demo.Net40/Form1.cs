@@ -11,33 +11,47 @@ namespace Hang.EmguCV.Demo.Net40
 {
     public partial class Form1 : Form
     {
+        private bool _saveNext = false;
+
         private VideoCapture _capture;
         private CascadeClassifier _cascadeClassifier;
-        private FaceRecognizer _faceRecognizer;
+        private FaceRecognizer _faceRecognizer = null;
 
         public Form1()
         {
             InitializeComponent();
+            var dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FaceImages");
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             _capture = new VideoCapture();
             _cascadeClassifier = new CascadeClassifier(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "haarcascade_frontalface_default.xml"));
-            _faceRecognizer = new EigenFaceRecognizer(80, double.PositiveInfinity);
-
 
             //
-            var faceImages = new Image<Gray, byte>[1];
-            var faceLabels = new int[1];
+            var files = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FaceImages")).GetFiles();
+            if (files.Length > 0)
+            {
+                _faceRecognizer = new EigenFaceRecognizer(80, double.PositiveInfinity);
 
-            var faceImage = new Image<Gray, byte>(new Bitmap(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "999a707d-87e6-4f0f-8cbb-0fa1f44ce6f1.bmp")));
+                var faceImages = new Image<Gray, byte>[files.Length];
+                var faceLabels = new int[files.Length];
 
-            faceImages[0] = faceImage;//.Resize(100, 100, Inter.Cubic);
-            faceLabels[0] = 123;
-            _faceRecognizer.Train(faceImages, faceLabels);
-            _faceRecognizer.Write(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "faceRecognizer.dat"));
-            _faceRecognizer.Read(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "faceRecognizer.dat"));
+                for (int i = 0; i < files.Length; i++)
+                {
+                    var faceImage = new Image<Gray, byte>(new Bitmap(files[i].FullName));
+                    faceImages[i] = faceImage;
+                    faceLabels[i] = i;
+                }
+
+                _faceRecognizer.Train(faceImages, faceLabels);
+                _faceRecognizer.Write(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "faceRecognizer.dat"));
+                //_faceRecognizer.Read(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "faceRecognizer.dat"));
+            }
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
@@ -51,17 +65,26 @@ namespace Hang.EmguCV.Demo.Net40
 
                     foreach (var face in faces)
                     {
-                        var result = _faceRecognizer.Predict(grayframe);
-                        imageFrame.Draw(face, new Bgr(Color.BurlyWood), 2); //the detected face(s) is highlighted here using a box that is drawn around it/them
+                        var result = _faceRecognizer?.Predict(grayframe);
+                        imageFrame.Draw(result?.Label.ToString(), new Point(face.X, face.Y), FontFace.HersheySimplex, 1.1, new Bgr(Color.Green));
+                        imageFrame.Draw(face, new Bgr(Color.BurlyWood), 1); //the detected face(s) is highlighted here using a box that is drawn around it/them
                     }
                     imgCamUser.Image = imageFrame;
-                }
 
-                //var faceToSave = new Image<Gray, byte>(imageFrame.Bitmap);
-                //var filePath = Application.StartupPath + String.Format("/{0}.bmp", Guid.NewGuid().ToString());
-                //faceToSave.ToBitmap().Save(filePath);
+                    if (_saveNext == true)
+                    {
+                        _saveNext = false;
+                        var faceToSave = new Image<Gray, byte>(imageFrame.Bitmap);
+                        var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FaceImages", $"{Guid.NewGuid().ToString()}.bmp");
+                        faceToSave.ToBitmap().Save(filePath);
+                    }
+                }
             }
         }
 
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            _saveNext = true;
+        }
     }
 }
