@@ -49,7 +49,7 @@ namespace Hang.EmguCV.Demo.Net40
                 }
 
                 _faceRecognizer.Train(faceImages, faceLabels);
-                _faceRecognizer.Write(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "faceRecognizer.dat"));
+                //_faceRecognizer.Write(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "faceRecognizer.dat"));
                 //_faceRecognizer.Read(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "faceRecognizer.dat"));
             }
         }
