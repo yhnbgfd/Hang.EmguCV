@@ -1,6 +1,5 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
-using Emgu.CV.Face;
 using Emgu.CV.Structure;
 using System;
 using System.Drawing;
@@ -15,7 +14,6 @@ namespace Hang.EmguCV.Demo.Net40
 
         private VideoCapture _capture;
         private CascadeClassifier _cascadeClassifier;
-        private FaceRecognizer _faceRecognizer = null;
 
         public Form1()
         {
@@ -31,32 +29,12 @@ namespace Hang.EmguCV.Demo.Net40
         {
             _capture = new VideoCapture();
             _cascadeClassifier = new CascadeClassifier(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "haarcascade_frontalface_default.xml"));
-
-            //
-            var files = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FaceImages")).GetFiles();
-            if (files.Length > 0)
-            {
-                _faceRecognizer = new EigenFaceRecognizer(80, double.PositiveInfinity);
-
-                var faceImages = new Image<Gray, byte>[files.Length];
-                var faceLabels = new int[files.Length];
-
-                for (int i = 0; i < files.Length; i++)
-                {
-                    var faceImage = new Image<Gray, byte>(new Bitmap(files[i].FullName));
-                    faceImages[i] = faceImage;
-                    faceLabels[i] = i;
-                }
-
-                _faceRecognizer.Train(faceImages, faceLabels);
-                //_faceRecognizer.Write(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "faceRecognizer.dat"));
-                //_faceRecognizer.Read(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "faceRecognizer.dat"));
-            }
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            using (var imageFrame = _capture.QueryFrame().ToImage<Bgr, Byte>())
+            Image<Gray, byte> image2 = new Image<Gray, byte>(@"D:\Temp\431224198711172917.bmp");
+            using (var imageFrame = _capture.QueryFrame().ToImage<Bgr, byte>())
             {
                 if (imageFrame != null)
                 {
@@ -65,8 +43,10 @@ namespace Hang.EmguCV.Demo.Net40
 
                     foreach (var face in faces)
                     {
-                        var result = _faceRecognizer?.Predict(grayframe);
-                        imageFrame.Draw(result?.Label.ToString(), new Point(face.X, face.Y), FontFace.HersheySimplex, 1.1, new Bgr(Color.Green));
+                        //var result = CvInvoke.CompareHist(grayframe, image2, HistogramCompMethod.Bhattacharyya);
+                        var result = CvInvoke.MatchShapes(grayframe, image2, ContoursMatchType.I3);
+
+                        imageFrame.Draw(result.ToString("0.0000"), new Point(face.X, face.Y), FontFace.HersheySimplex, 1.1, new Bgr(Color.Red));
                         imageFrame.Draw(face, new Bgr(Color.BurlyWood), 1); //the detected face(s) is highlighted here using a box that is drawn around it/them
                     }
                     imgCamUser.Image = imageFrame;
