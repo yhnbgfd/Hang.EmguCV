@@ -39,8 +39,11 @@ namespace Hang.EmguCV.Demo.Net40
             //准备轮廓  
             Image<Bgr, Byte> image1 = new Image<Bgr, byte>("D:\\code\\picture\\frunck.jpg");
             Image<Bgr, Byte> image2 = new Image<Bgr, byte>("D:\\code\\picture\\lena.jpg");
-            MCvAvgComp[] faces = haar.Detect(image1.Convert<Gray, byte>(), 1.4, 1, Emgu.CV.CvEnum.HAAR_DETECTION_TYPE.DO_CANNY_PRUNING, new Size(20, 20), Size.Empty);
-            MCvAvgComp[] faces2 = haar.Detect(image2.Convert<Gray, byte>(), 1.4, 1, Emgu.CV.CvEnum.HAAR_DETECTION_TYPE.DO_CANNY_PRUNING, new Size(20, 20), Size.Empty);
+            var aaa = image1.Convert<Gray, byte>();
+            MCvAvgComp[] faces = image1.Convert<Gray, byte>().DetectHaarCascade(haar)[0];
+            MCvAvgComp[] faces2 = image2.Convert<Gray, byte>().DetectHaarCascade(haar)[0];
+            //MCvAvgComp[] faces = haar.Detect(image1.Convert<Gray, byte>(), 1.4, 1, Emgu.CV.CvEnum.HAAR_DETECTION_TYPE.DO_CANNY_PRUNING, new Size(20, 20), Size.Empty);
+            //MCvAvgComp[] faces2 = haar.Detect(image2.Convert<Gray, byte>(), 1.4, 1, Emgu.CV.CvEnum.HAAR_DETECTION_TYPE.DO_CANNY_PRUNING, new Size(20, 20), Size.Empty);
 
             int l1 = faces.Length;
             int l2 = faces2.Length;
@@ -72,7 +75,7 @@ namespace Hang.EmguCV.Demo.Net40
             //compareResult = CvInvoke.cvMatchShapes(HistImg1, HistImg2, Emgu.CV.CvEnum.CONTOURS_MATCH_TYPE.CV_CONTOURS_MATCH_I3, 1d); 
             sw.Stop();
             double time = sw.Elapsed.TotalMilliseconds;
-            return string.Format("成对几何直方图匹配（匹配方式：{0}），结果：{1:F05}，用时：{2:F05}毫秒\r\n", compareMethod.ToString("G"), compareResult, time);
+            //return string.Format("成对几何直方图匹配（匹配方式：{0}），结果：{1:F05}，用时：{2:F05}毫秒\r\n", compareMethod.ToString("G"), compareResult, time);
 
             //using (var imageFrame = _capture.QueryFrame().ToImage<Bgr, Byte>())
             //{
