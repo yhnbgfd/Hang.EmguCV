@@ -26,7 +26,7 @@ namespace Hang.EmguCV.Demo.Net40
 
             int[] hist_size = new int[1] { 256 };//建一个数组来存放直方图数据
 
-            Image<Bgr, Byte> image2 = new Image<Bgr, byte>(@"D:\Temp\TIM截图20180824163809.bmp");
+            Image<Bgr, Byte> image2 = new Image<Bgr, byte>(@"D:\Temp\360281198912231416.bmp");
             MCvAvgComp[] faces2 = image2.Convert<Gray, byte>().DetectHaarCascade(haar)[0];
             if (faces2.Length == 0)
             {
