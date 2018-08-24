@@ -30,7 +30,7 @@ namespace Hang.EmguCV.Demo.Net40
             MCvAvgComp[] faces2 = image2.Convert<Gray, byte>().DetectHaarCascade(haar)[0];
             if (faces2.Length == 0)
             {
-                return;
+                throw new Exception("图里没人！");
             }
             image2 = image2.Copy(faces2[0].rect);
             Image<Gray, Byte> imageGray2 = image2.Convert<Gray, Byte>();
@@ -40,7 +40,6 @@ namespace Hang.EmguCV.Demo.Net40
             IntPtr[] inPtr2 = new IntPtr[1] { imageThreshold2 };
             CvInvoke.cvCalcHist(inPtr2, HistImg2, false, IntPtr.Zero);
             CvInvoke.cvNormalizeHist(HistImg2, 1d);
-
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
