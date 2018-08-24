@@ -30,26 +30,16 @@
         {
             this.components = new System.ComponentModel.Container();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.imgCamUser = new Emgu.CV.UI.ImageBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.imgCamUser = new Emgu.CV.UI.ImageBox();
             ((System.ComponentModel.ISupportInitialize)(this.imgCamUser)).BeginInit();
             this.SuspendLayout();
             // 
             // timer1
             // 
             this.timer1.Enabled = true;
+            this.timer1.Interval = 500;
             this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
-            // 
-            // imgCamUser
-            // 
-            this.imgCamUser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.imgCamUser.Location = new System.Drawing.Point(12, 12);
-            this.imgCamUser.Name = "imgCamUser";
-            this.imgCamUser.Size = new System.Drawing.Size(695, 426);
-            this.imgCamUser.TabIndex = 2;
-            this.imgCamUser.TabStop = false;
             // 
             // button1
             // 
@@ -61,6 +51,17 @@
             this.button1.Text = "保存";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button1_Click);
+            // 
+            // imgCamUser
+            // 
+            this.imgCamUser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.imgCamUser.Location = new System.Drawing.Point(12, 12);
+            this.imgCamUser.Name = "imgCamUser";
+            this.imgCamUser.Size = new System.Drawing.Size(695, 426);
+            this.imgCamUser.TabIndex = 2;
+            this.imgCamUser.TabStop = false;
             // 
             // Form1
             // 
@@ -80,8 +81,8 @@
         #endregion
 
         private System.Windows.Forms.Timer timer1;
-        private Emgu.CV.UI.ImageBox imgCamUser;
         private System.Windows.Forms.Button button1;
+        private Emgu.CV.UI.ImageBox imgCamUser;
     }
 }
 
