@@ -7,11 +7,10 @@ namespace Hang.EmguCV.Demo.Net40
 {
     public partial class Form1 : Form
     {
-        private bool _saveNext = false;
-
         private HaarCascade haar;
 
         private Capture _capture;
+        private IntPtr HistImg2;
 
         public Form1()
         {
@@ -22,7 +21,26 @@ namespace Hang.EmguCV.Demo.Net40
         {
             string haarXmlPath = @"haarcascade_frontalface_alt_tree.xml";
             haar = new HaarCascade(haarXmlPath);
-            _capture = new Capture(1);
+            _capture = new Capture(0);
+
+
+            int[] hist_size = new int[1] { 256 };//建一个数组来存放直方图数据
+
+            Image<Bgr, Byte> image2 = new Image<Bgr, byte>(@"D:\Temp\TIM截图20180824163809.bmp");
+            MCvAvgComp[] faces2 = image2.Convert<Gray, byte>().DetectHaarCascade(haar)[0];
+            if (faces2.Length == 0)
+            {
+                return;
+            }
+            image2 = image2.Copy(faces2[0].rect);
+            Image<Gray, Byte> imageGray2 = image2.Convert<Gray, Byte>();
+            Image<Gray, Byte> imageThreshold2 = imageGray2.ThresholdBinaryInv(new Gray(128d), new Gray(255d));
+            //Contour<Point> contour2 = imageThreshold2.FindContours();
+            HistImg2 = CvInvoke.cvCreateHist(1, hist_size, Emgu.CV.CvEnum.HIST_TYPE.CV_HIST_ARRAY, null, 1);
+            IntPtr[] inPtr2 = new IntPtr[1] { imageThreshold2 };
+            CvInvoke.cvCalcHist(inPtr2, HistImg2, false, IntPtr.Zero);
+            CvInvoke.cvNormalizeHist(HistImg2, 1d);
+
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
@@ -42,41 +60,27 @@ namespace Hang.EmguCV.Demo.Net40
                 {
                     return;
                 }
-                Image<Bgr, Byte> image2 = new Image<Bgr, byte>(@"D:\Temp\TIM截图20180815164555.bmp");
-                MCvAvgComp[] faces2 = image2.Convert<Gray, byte>().DetectHaarCascade(haar)[0];
-                if (faces2.Length == 0)
-                {
-                    return;
-                }
 
                 image1 = image1.Copy(faces[0].rect);
-                image2 = image2.Copy(faces2[0].rect);
                 Image<Gray, Byte> imageGray1 = image1.Convert<Gray, Byte>();
-                Image<Gray, Byte> imageGray2 = image2.Convert<Gray, Byte>();
                 Image<Gray, Byte> imageThreshold1 = imageGray1.ThresholdBinaryInv(new Gray(128d), new Gray(255d));
-                Image<Gray, Byte> imageThreshold2 = imageGray2.ThresholdBinaryInv(new Gray(128d), new Gray(255d));
                 //Contour<Point> contour1 = imageThreshold1.FindContours();
-                //Contour<Point> contour2 = imageThreshold2.FindContours();
                 IntPtr HistImg1 = CvInvoke.cvCreateHist(1, hist_size, Emgu.CV.CvEnum.HIST_TYPE.CV_HIST_ARRAY, null, 1); //创建一个空的直方图
-                IntPtr HistImg2 = CvInvoke.cvCreateHist(1, hist_size, Emgu.CV.CvEnum.HIST_TYPE.CV_HIST_ARRAY, null, 1);
 
                 IntPtr[] inPtr1 = new IntPtr[1] { imageThreshold1 };
-                IntPtr[] inPtr2 = new IntPtr[1] { imageThreshold2 };
                 CvInvoke.cvCalcHist(inPtr1, HistImg1, false, IntPtr.Zero); //计算inPtr1指向图像的数据，并传入HistImg1中
-                CvInvoke.cvCalcHist(inPtr2, HistImg2, false, IntPtr.Zero);
                 double compareResult;
                 Emgu.CV.CvEnum.HISTOGRAM_COMP_METHOD compareMethod = Emgu.CV.CvEnum.HISTOGRAM_COMP_METHOD.CV_COMP_BHATTACHARYYA;
                 CvInvoke.cvNormalizeHist(HistImg1, 1d); //直方图对比方式 
-                CvInvoke.cvNormalizeHist(HistImg2, 1d);
                 compareResult = CvInvoke.cvCompareHist(HistImg1, HistImg2, compareMethod);
                 //compareResult = CvInvoke.cvMatchShapes(HistImg1, HistImg2, Emgu.CV.CvEnum.CONTOURS_MATCH_TYPE.CV_CONTOURS_MATCH_I3, 1d); 
                 var str = string.Format("成对几何直方图匹配（匹配方式：{0}），结果：{1:F05}", compareMethod.ToString("G"), compareResult);
+                Console.WriteLine(str);
             }
         }
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            _saveNext = true;
         }
     }
 }
