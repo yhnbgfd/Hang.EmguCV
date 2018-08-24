@@ -26,7 +26,7 @@ namespace Hang.EmguCV.Demo.Net40
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            haar = new HaarCascade(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "haarcascade_frontalface_default.xml"));
+            //haar = new HaarCascade(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "haarcascade_frontalface_default.xml"));
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
@@ -37,8 +37,8 @@ namespace Hang.EmguCV.Demo.Net40
                                                  //IntPtr img1 = CvInvoke.cvLoadImage("", Emgu.CV.CvEnum.LOAD_IMAGE_TYPE.CV_LOAD_IMAGE_ANYCOLOR); //根据路径导入图像
 
             //准备轮廓  
-            Image<Bgr, Byte> image1 = new Image<Bgr, byte>("D:\\code\\picture\\frunck.jpg");
-            Image<Bgr, Byte> image2 = new Image<Bgr, byte>("D:\\code\\picture\\lena.jpg");
+            Image<Bgr, Byte> image1 = new Image<Bgr, byte>(@"D:\Temp\1.bmp");
+            Image<Bgr, Byte> image2 = new Image<Bgr, byte>(@"D:\Temp\360281198912231416.bmp");
             var aaa = image1.Convert<Gray, byte>();
             MCvAvgComp[] faces = image1.Convert<Gray, byte>().DetectHaarCascade(haar)[0];
             MCvAvgComp[] faces2 = image2.Convert<Gray, byte>().DetectHaarCascade(haar)[0];
@@ -75,7 +75,7 @@ namespace Hang.EmguCV.Demo.Net40
             //compareResult = CvInvoke.cvMatchShapes(HistImg1, HistImg2, Emgu.CV.CvEnum.CONTOURS_MATCH_TYPE.CV_CONTOURS_MATCH_I3, 1d); 
             sw.Stop();
             double time = sw.Elapsed.TotalMilliseconds;
-            //return string.Format("成对几何直方图匹配（匹配方式：{0}），结果：{1:F05}，用时：{2:F05}毫秒\r\n", compareMethod.ToString("G"), compareResult, time);
+            var str = string.Format("成对几何直方图匹配（匹配方式：{0}），结果：{1:F05}，用时：{2:F05}毫秒\r\n", compareMethod.ToString("G"), compareResult, time);
 
             //using (var imageFrame = _capture.QueryFrame().ToImage<Bgr, Byte>())
             //{
